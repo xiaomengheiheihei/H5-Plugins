@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>H5-Plugin</title>
+	</head>
+	<body>
+		
+	</body>
+	<script>
+		let xhr = new XMLHttpRequest();
+		xhr.open('POST', '/getJson', true);
+		xhr.send();
+		xhr.onreadystatechange = (event) => {
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				console.log(JSON.parse(event.target.response));
+			}
+		}
+	</script>
+</html>
