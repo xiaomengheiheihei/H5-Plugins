@@ -9,9 +9,6 @@ const bodyParser = require('koa-bodyparser')  //请求体，返回体解析类�
 app.use(loggerAsync())
 app.use(bodyParser())
 
-// app.use( async ( ctx ) => {
-//   ctx.body = 'hello world!'
-// })
 
 app.use(require('./router/index').routes())
 app.use(require('./router/configPage').routes())

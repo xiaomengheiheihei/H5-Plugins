@@ -10,13 +10,14 @@ router.get('/', async (ctx, next) => {
 router.get('/index', async(ctx, next) => {
 	"use strict";
     ctx.body = await getViews('/index')
-    // ctx.body = f1()
 })
 
+// 将解析后的xml文件作为json返回
 router.post('/getJson',async(ctx, next) => {
     ctx.body = await f1();
 })
 
+// 解析xml
 async function f1 () {
 	let a2;
 	await f2().then((data) => {
@@ -30,6 +31,10 @@ async function f1 () {
 
 module.exports = router
 
+
+/**
+* 读取xml文件
+*/ 
 function getXml (url) {
 	return new Promise((resolve, reject) => {
 		fs.readFile(path.resolve('./server/xmls/channeltemplates.xml'), (err, data) => {
@@ -42,6 +47,7 @@ function getXml (url) {
 	});
 }
 
+// 异步获取文件信息
 async function f2 () {
 	const a1 = await getXml();
 	return a1.toString();
