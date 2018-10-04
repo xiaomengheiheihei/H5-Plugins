@@ -1,0 +1,188 @@
+body {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid #eee;
+    margin-top: 1vh;
+}
+.logo-wrap {
+    float: left;
+}
+.logo {
+    display: inline-block;
+    width: 200px;
+    height: 100px;
+    vertical-align: middle;
+}
+.title {
+    vertical-align: middle;
+    font-size: 24px;
+}
+.drap-wrap {
+    float: right;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    position: relative;
+    cursor: move;
+    margin-right: 30px;
+    margin-top: 20px;
+}
+.ver {
+    height: 20px;
+    width: 3px;
+    background-color: rgb(46, 45, 45);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+}
+.lev {
+    height: 3px;
+    width: 20px;
+    background-color: rgb(46, 45, 45);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+}
+main {
+    padding: 20px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.template-name-wrap select {
+    width: 150px;
+    outline: none;
+}
+.btns-wrap > div {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: default;
+}
+.save {
+    margin: 0 30px;
+}
+.container {
+    margin-top: 20px;
+}
+.left-wrap, .center-wrap {
+    float: left;
+    width: 150px;
+    height: 300px;
+    border: 1px solid #eee;
+    margin-right: 70px;
+}
+.left-wrap {
+    margin-right: 70px;
+}
+.left-wrap ul, .center-wrap ul {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
+.left-wrap ul li, .center-wrap ul li {
+    font-size: 14px;
+    padding: 3px 0; 
+    padding-left: 5px;
+}
+.right-wrap {
+    /* width: 100%;
+    margin-left: 500px; */
+    float: right;
+    width: 50%;
+}
+.btns-wrap {
+    margin-top: 20px;
+    text-align: right;
+    padding-right: 30px;
+}
+.des-wrap {
+    margin: 20px 0;
+    position: relative;
+    border: 1px solid #eee;
+    padding: 10px 5px;
+    min-height: 80px;
+}
+.des-tops {
+    position: absolute;
+    top: -10px;
+    left: 3px;
+    background-color: #fff;
+}
+.list-wrap li {
+    float: left;
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    border-bottom: 0;
+}
+.list-wrap li:first-child {
+    border-right: 0;
+}
+.list-wrap li:last-child {
+    border-left: 0;
+}
+.nav-tap-wrap section {
+    border: 1px solid #ccc;
+    min-height: 100px;
+    line-height: 90px;
+    padding-left: 20px;
+}
+.line {
+    margin: 20px 0;
+    height: 1px;
+    width: 100%;
+    padding: 0 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.line div {
+    height: 1px;
+    width: 100%;
+    background-color: #ccc;
+}
+footer {
+    padding: 0 20px;
+}
+.pre-mos {
+    text-align: left;
+    height: 150px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+.copy-wrap {
+    text-align: right;
+    margin-bottom: 10px;
+}
+.copy-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: default;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.type-selected {
+    background-color: rgb(118, 204, 238);
+    color: #fff;
+}
+.transition-main input {
+    display: inline-block;
+    width: 150px;
+}

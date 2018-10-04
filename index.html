@@ -3,18 +3,74 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>H5-Plugin</title>
+		<link rel="stylesheet" href="/static/style/reset.css">
+		<link rel="stylesheet" href="/static/style/plugin.css">
 	</head>
 	<body>
-		
+		<div id="app">
+			<header class="clear">
+				<div class="logo-wrap">
+					<img class="logo" src="/static/images/logo.jpg" alt="">
+					<span class="title">MOSART文稿系统插件</span>
+				</div>
+				<div class="drap-wrap" draggable="true">
+					<div class="ver"></div>
+					<div class="lev"></div>
+				</div>
+			</header>
+			<main>
+				<div class="template-name-wrap">
+					<select name="" id="templateName">
+					</select>
+				</div>
+				<div class="container clear">
+					<div class="left-wrap">
+						<ul>
+						</ul>
+					</div>
+					<div class="center-wrap">
+						<ul>
+						</ul>
+					</div>
+					<div class="right-wrap">
+						<div class="channel-name"></div>
+						<div class="des-wrap">
+							<span class="des-tops">Description</span>
+							<div class="des-content"></div>
+						</div>
+						<div class="nav-tap-wrap">
+							<ul class="list-wrap clear">
+								<li index="">Transition</li>
+								<li>audio</li>
+								<li>others</li>
+							</ul>
+							<section class="transition-main">
+								<select name="" id="transition-select">
+								</select>
+							</section>
+							<section class="audio-main none">audio-config</section>
+							<section class="others-main none">others-config</section>
+						</div>
+					</div>
+				</div>
+				<div class="btns-wrap">
+					<div class="preview">预览</div>
+					<div class="save">保存</div>
+					<div class="cancel">关闭</div>
+				</div>
+			</main>
+			<div class="line"><div></div></div>
+			<footer>
+				<div class="pre-mos" id="pre-mos-data">
+					
+				</div>
+				<div class="copy-wrap">
+					<div class="copy-btn" data-clipboard-target="#pre-mos-data">拷贝至剪切板</div>
+				</div>
+			</footer>
+		</div>
 	</body>
-	<script>
-		let xhr = new XMLHttpRequest();
-		xhr.open('POST', '/getJson', true);
-		xhr.send();
-		xhr.onreadystatechange = (event) => {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				console.log(JSON.parse(event.target.response));
-			}
-		}
-	</script>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/clipboard.min.js"></script>
+	<script src="/static/js/plugin.js"></script>
 </html>

@@ -13,7 +13,7 @@ router.get('/index', async(ctx, next) => {
 })
 
 // 将解析后的xml文件作为json返回
-router.post('/getJson',async(ctx, next) => {
+router.get('/getJson',async(ctx, next) => {
     ctx.body = await f1();
 })
 
