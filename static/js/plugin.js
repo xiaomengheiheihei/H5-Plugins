@@ -34,7 +34,11 @@ $.ajax({
     data: '',
     dataType: 'json',
     success: function (data) {
-        config = data;
+        if (data.success === 1) {
+            config = data.data;
+        } else {
+            alert(data.error.msg);
+        }
     },
     error: function (err) {
 
@@ -297,6 +301,8 @@ function renderEvent () {
     // 选择type
     $('.left-wrap ul').on('click', 'li', function () {
         if ($(this).hasClass('type-selected')) {return false}
+        $('.left-wrap ul li').attr('choosed', 0);
+        $(this).attr('choosed', 1);
         $('.left-wrap ul li').removeClass('type-selected');
         $(this).addClass('type-selected');
         makeTemplateType(channels, $(this).attr('type'));
@@ -306,6 +312,8 @@ function renderEvent () {
     // 选择templatetype
     $('.center-wrap ul').on('click', 'li', function () {
         if ($(this).hasClass('type-selected')) {return false}
+        $('.center-wrap ul li').attr('choosed', 0);
+        $(this).attr('choosed', 1);
         $('.center-wrap ul li').removeClass('type-selected');
         $(this).addClass('type-selected');
         renderTransitions(channels, $(this).attr('channelid'));
@@ -335,6 +343,7 @@ function renderEvent () {
 
     // 预览
     $('.preview').click(function () {
+        if (!config) {alert('请开启服务！')}
         var choosedChannel = findItem();
         var choosedTransition;
         choosedChannel.switcher_setup.transitions.transition.forEach(function (ele) {
@@ -357,8 +366,8 @@ function renderEvent () {
                     '&lt;mosPayload&gt;' + 
                     '&lt;mosarttemplate&gt;' + 
                     '&lt;type name="'+ choosedChannel.$.type +'" category=""&gt;' +
-                    '&lt;variants value="' + choosedChannel.$.templatetype + '" fieldtype="'+ ($('.transition-select-form') ? 'LIST' : 'NUMBER') +'"&gt;' +
-                    '&lt;variant name="' + choosedChannel.$.type +'"&gt;' + 
+                    '&lt;variants value="' + choosedChannel.$.templatetype + '" fieldtype="'+ ($('.transition-select-form').val() ? 'LIST' : 'NUMBER') +'"&gt;' +
+                    '&lt;variant name="' + choosedChannel.$.templatetype +'"&gt;' + 
                     '&lt;transitions value="'+$('#transition-select').val()+'" enable="'+choosedChannel.switcher_setup.transitions.$.enable+'"&gt;' +
                     '&lt;transition name="'+$('#transition-select').val()+'"&gt;' +
                     (choosedTransition.field.$.fieldtype == 'NUMBER' ? '&lt;field name="'+choosedTransition.field.$.name+'" value="'+$('#transition-form-item').val()+'" fieldtype="'+choosedTransition.field.$.fieldtype+'" range="'+choosedTransition.field.$.range+'" /&gt;' : '&lt;field name="'+choosedTransition.field.$.name+'" value="'+$('.transition-select-form').val()+'" fieldtype="'+choosedTransition.field.$.fieldtype+'" /&gt;') +

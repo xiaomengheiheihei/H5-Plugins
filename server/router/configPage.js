@@ -20,16 +20,28 @@ router.get('/config', async(ctx, next) => {
 // 返回配置信息
 router.get('/getConfig', async(ctx, next) => {
 	"use strict";
-	let obj = {
-		mosID: mosID,
-		mosPlugInID: mosPlugInID,
-		mosItemBrowserProgID: mosItemBrowserProgID,
-		mosItemEditorProgID: mosItemEditorProgID
+	if (status) {
+		let obj = {
+			mosID: mosID,
+			mosPlugInID: mosPlugInID,
+			mosItemBrowserProgID: mosItemBrowserProgID,
+			mosItemEditorProgID: mosItemEditorProgID
+		}
+		ctx.body = {
+			success: 1,
+			data: {data: obj},
+			error: {}
+		}
+	} else {
+		ctx.body = {
+			success: 0,
+			data: {},
+			error: {code: '0001', msg: '服务状态已关闭，请开启后重试！'}
+		};
 	}
-    ctx.body = obj;
 })
 
-// 返回配置信息
+// 设置配置信息
 router.post('/setConfig', async(ctx, next) => {
 	var query = ctx.request.body;
 	if (query.mosID) {
