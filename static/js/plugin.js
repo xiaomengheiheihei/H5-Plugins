@@ -35,9 +35,9 @@ $.ajax({
     dataType: 'json',
     success: function (data) {
         if (data.success === 1) {
-            config = data.data;
+            config = data.data.data;
         } else {
-            alert(data.error.msg);
+            alert(data.data.error.msg);
         }
     },
     error: function (err) {
