@@ -352,20 +352,22 @@ function renderEvent () {
             }
         })
         var mos =   '&lt;mos&gt;' + 
+                    '&lt;ncsItem&gt;' +
+                    '&lt;item&gt;' +
                     '&lt;itemID&gt;' + 0 + '&lt;/itemID&gt;'+
-                    '&lt;objID&gt;'+ 0 +'&lt;/objID&gt;' +
+                    '&lt;objID&gt;'+ changeType(choosedChannel.$.type) + ';' + choosedChannel.$.templatetype +'&lt;/objID&gt;' +
                     '&lt;mosID&gt;'+ config.mosID +'&lt;/mosID&gt;' + 
                     '&lt;mosPlugInID&gt;'+ config.mosPlugInID +'&lt;/mosPlugInID&gt;' +
                     '&lt;mosItemBrowserProgID&gt;'+ config.mosItemBrowserProgID +'&lt;/mosItemBrowserProgID&gt;' + 
                     '&lt;mosItemEditorProgID&gt;'+ config.mosItemEditorProgID +'&lt;/mosItemEditorProgID&gt;' + 
-                    '&lt;mosAbstract&gt;'+ choosedChannel.$.type + ' ' + choosedChannel.$.templatetype + ' ' + 
+                    '&lt;mosAbstract&gt;'+ changeType(choosedChannel.$.type) + ' ' + choosedChannel.$.templatetype + ' ' + 
                     $('#transition-select').val() + ' ' + ($('#transition-form-item').val() == undefined ? $('.transition-select-form').val() : $('#transition-form-item').val()) +'&lt;/mosAbstract&gt;' +
                     '&lt;mosExternalMetadata&gt;' +
                     '&lt;mosScope&gt;PLAYLIST&lt;/mosScope&gt;' + 
                     '&lt;mosSchema&gt;http://www.mosartmedialab.no/schema/mositem.dtd&lt;/mosSchema&gt;' +
                     '&lt;mosPayload&gt;' + 
                     '&lt;mosarttemplate&gt;' + 
-                    '&lt;type name="'+ choosedChannel.$.type +'" category=""&gt;' +
+                    '&lt;type name="'+ changeType(choosedChannel.$.type) +'" category=""&gt;' +
                     '&lt;variants value="' + choosedChannel.$.templatetype + '" fieldtype="'+ ($('.transition-select-form').val() ? 'LIST' : 'NUMBER') +'"&gt;' +
                     '&lt;variant name="' + choosedChannel.$.templatetype +'"&gt;' + 
                     '&lt;transitions value="'+$('#transition-select').val()+'" enable="'+choosedChannel.switcher_setup.transitions.$.enable+'"&gt;' +
@@ -380,6 +382,8 @@ function renderEvent () {
                     '&lt;/mosarttemplate&gt;' +
                     '&lt;/mosPayload&gt;' +
                     '&lt;/mosExternalMetadata&gt;' +
+                    '&lt;item&gt;' +
+                    '&lt;/ncsItem&gt;' +
                     '&lt;/mos&gt;';
         $('.pre-mos').html(mos);
     })
