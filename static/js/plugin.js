@@ -5,7 +5,7 @@
 /**
  * template data
  */  
-var typeList = [], templateTypeList = [], channels, config;
+var typeList = [], templateTypeList = [], channels, config, dragInfo, currentId;
 renderEvent();
 $.ajax({
     url: '/getJson',
@@ -15,7 +15,6 @@ $.ajax({
     success: function (data) {
         console.log(data)
         channels = data.avconfig.channeltemplates.channels;
-        console.log(channels)
         makeTypeList(channels);
         renderName(channels);
         makeTemplateType(channels);
@@ -37,7 +36,7 @@ $.ajax({
         if (data.success === 1) {
             config = data.data.data;
         } else {
-            alert(data.data.error.msg);
+            alert(data.error.msg);
         }
     },
     error: function (err) {
@@ -45,6 +44,64 @@ $.ajax({
     },
     complete: function () {}
 })
+
+// postmessage Register message
+if (window.addEventListener) {
+    window.addEventListener('message', mosMsgFromHost, false);
+} else if (window.attachEvent) {
+    window.attachEvent('message', mosMsgFromHost, false);
+}
+
+
+
+// window.parent.postMessage(message, getNewsroomOrigin());
+
+function getNewsroomOrigin() {
+    var qs = document.location.search.split("+").join(" ");
+    var params = {};
+    var regex = /[?&]?([^=]+)=([^&]*)/g;
+    while (tokens = regex.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+    return params['origin'];
+}
+
+function mosMsgFromHost(event) {
+    var message = event.data;
+    // Check the Origin in event.origin to ensure it matches
+    // our expected NCS origin parameter.
+    if (event.origin != getNewsroomOrigin()) {
+        alert('Origin does not match');
+        return;
+    }
+    // Handle the Message
+    // To Reply, issue a postMessage on the event source.
+    var reply = "SOME MOS MESSAGE";
+    event.source.postMessage(reply, event.origin);
+}
+
+
+// drap
+$('#drap-content')[0].addEventListener('dragstart', function (ev) {
+    var mos = createData();
+    $('#drap-content').html(mos);
+    ev.dataTransfer.setData("text", safe_tags_replace(ev.target.innerHTML));
+})
+
+
+// 替换lt or gt
+var tagsToReplace = {
+    '&lt;': '<',
+    '&gt;': '>'
+};
+
+function replaceTag(tag) {
+    return tagsToReplace[tag] || tag;
+}
+
+function safe_tags_replace(str) {
+    return str.replace(/&lt;|&gt;/g, replaceTag);
+}
 
 // 组装typelist数组
 function makeTypeList(data) {
@@ -136,7 +193,7 @@ function changeType(type) {
     var result = '';
     switch (type) {
         case '0':
-            result = 'CAMERA';
+            result = 'CAM';
             break;
         case '1':
             result = 'PACKAGE';
@@ -228,9 +285,11 @@ function renderTransitions (data, id) {
                                     html += '<option selected="selected" value="'+ transition[j].$.name +'">'+ transition[j].$.name +'</option>';
                                     if(transition[j].field.$.fieldtype != 'LIST') {
                                         if ($('.transition-select-form')) {$('.transition-select-form').remove()}
-                                        formItem += '<input type="'+ transition[j].field.$.fieldtype +'" name="'+ transition[j].field.$.name +'" id="transition-form-item" value="'+ transition[j].field.$.value +'" min="'+ transition[j].field.$.range.split(',')[0] +'" max="'+ transition[j].field.$.range.split(',')[1] +'">'
+										if ($('#transition-form-item')) {$('#transition-form-item').remove()}
+                                        formItem += '<input type="'+ transition[j].field.$.fieldtype +'" name="'+ transition[j].field.$.name +'" id="transition-form-item" value="'+ ((!!transition[j].field.$.value) ? transition[j].field.$.value : '0') +'" min="'+ transition[j].field.$.range.split(',')[0] +'" max="'+ transition[j].field.$.range.split(',')[1] +'">'
                                     } else {
                                         if ($('#transition-form-item')) {$('#transition-form-item').remove()}
+										if($('.transition-select-form')) {$('.transition-select-form').remove()}
                                         formItem += '<select name="'+ transition[j].field.$.name +'" class="transition-select-form">';
                                         for(var m = 0; m < 3; m++) {
                                             if(m === 0) {
@@ -317,6 +376,7 @@ function renderEvent () {
         $('.center-wrap ul li').removeClass('type-selected');
         $(this).addClass('type-selected');
         renderTransitions(channels, $(this).attr('channelid'));
+		currentId =  $(this).attr('channelid');
         for (var i = 0; i < templateTypeList.length; i++) {
             if ($(this).attr('channelid') == templateTypeList[i].ID) {
                 $('.channel-name').html(templateTypeList[i].name);
@@ -338,12 +398,26 @@ function renderEvent () {
                 })
             }
         });
-        renderTransitions(channels);
+        renderTransitions(channels, currentId);
     })
 
     // 预览
     $('.preview').click(function () {
-        if (!config) {alert('请开启服务！')}
+        var mos = createData();
+        $('.pre-mos').html(mos);
+    })
+
+
+    var clipboard = new ClipboardJS('.copy-btn');
+
+    clipboard.on('success', function(e) {
+        alert('复制成功');
+    });
+}
+
+
+function createData () {
+    if (!config) {alert('请开启服务！')}
         var choosedChannel = findItem();
         var choosedTransition;
         choosedChannel.switcher_setup.transitions.transition.forEach(function (ele) {
@@ -368,9 +442,9 @@ function renderEvent () {
                     '&lt;mosPayload&gt;' + 
                     '&lt;mosarttemplate&gt;' + 
                     '&lt;type name="'+ changeType(choosedChannel.$.type) +'" category=""&gt;' +
-                    '&lt;variants value="' + choosedChannel.$.templatetype + '" fieldtype="'+ ($('.transition-select-form').val() ? 'LIST' : 'NUMBER') +'"&gt;' +
+                    '&lt;variants value="' + choosedChannel.$.templatetype + '" fieldtype="LIST"&gt;' +
                     '&lt;variant name="' + choosedChannel.$.templatetype +'"&gt;' + 
-                    '&lt;transitions value="'+$('#transition-select').val()+'" enable="'+choosedChannel.switcher_setup.transitions.$.enable+'"&gt;' +
+                    '&lt;transitions value="'+$('#transition-select').val()+'" enable="false"&gt;' +
                     '&lt;transition name="'+$('#transition-select').val()+'"&gt;' +
                     (choosedTransition.field.$.fieldtype == 'NUMBER' ? '&lt;field name="'+choosedTransition.field.$.name+'" value="'+$('#transition-form-item').val()+'" fieldtype="'+choosedTransition.field.$.fieldtype+'" range="'+choosedTransition.field.$.range+'" /&gt;' : '&lt;field name="'+choosedTransition.field.$.name+'" value="'+$('.transition-select-form').val()+'" fieldtype="'+choosedTransition.field.$.fieldtype+'" /&gt;') +
                     '&lt;/transition&gt;' +
@@ -385,15 +459,7 @@ function renderEvent () {
                     '&lt;item&gt;' +
                     '&lt;/ncsItem&gt;' +
                     '&lt;/mos&gt;';
-        $('.pre-mos').html(mos);
-    })
-
-
-    var clipboard = new ClipboardJS('.copy-btn');
-
-    clipboard.on('success', function(e) {
-        alert('复制成功');
-    });
+    return mos;
 }
 
 // find choosed item

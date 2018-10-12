@@ -37,8 +37,10 @@ module.exports = router
 * 读取xml文件
 */ 
 function getXml (url) {
+	// let urls = 'C:/channeltemplates/channeltemplates.xml';
+	let urls = './server/xmls/channeltemplates.xml';
 	return new Promise((resolve, reject) => {
-		fs.readFile(path.resolve('./server/xmls/channeltemplates.xml'), (err, data) => {
+		fs.readFile(path.resolve(urls), (err, data) => {
 			if (err) {
 				reject(err)
 			} else {

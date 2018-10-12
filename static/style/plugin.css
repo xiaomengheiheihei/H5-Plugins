@@ -4,6 +4,9 @@ body {
     border: 1px solid #eee;
     margin-top: 1vh;
 }
+header {
+    position: relative;
+}
 .logo-wrap {
     float: left;
 }
@@ -27,6 +30,18 @@ body {
     cursor: move;
     margin-right: 30px;
     margin-top: 20px;
+    z-index: 1;
+}
+#drap-content {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    z-index: 10;
+    cursor: move;
+    opacity: 0;
 }
 .ver {
     height: 20px;
@@ -159,6 +174,8 @@ footer {
     border: 1px solid #ccc;
     margin-bottom: 10px;
     font-size: 15px;
+	overflow: hidden;
+	word-break: break-all;
 }
 .copy-wrap {
     text-align: right;

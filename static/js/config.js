@@ -1,5 +1,9 @@
 var status;
 $('.save-btn').click(function () {
+    if (status == 'true') {
+        alert('请先关闭服务重试！'); 
+        return false
+    }
     var data = {
         mosID: $('#mosID').val(),
         mosPlugInID: $('#mosPlugInID').val(),
@@ -30,6 +34,7 @@ $('.status-btn span').click(function () {
         data: '',
         dataType: 'json',
         success: function (data) {
+            status = data.data.status;
             if (data.data.status) {
                 $('.status').html('已开启') 
                 $('.status-btn span').html('关闭服务')
@@ -52,6 +57,7 @@ $.ajax({
     data: '',
     dataType: 'json',
     success: function (data) {
+        status = data;
         if(data) {
            $('.status').html('已开启') 
            $('.status-btn span').html('关闭服务')

@@ -6,9 +6,9 @@ const path = require('path')
 const router = require('koa-router')();
 
 let mosID = 'mosart';
-let mosPlugInID = 'Mosart.ActiveX';
-let mosItemBrowserProgID = 'Mosart.ActiveX';
-let mosItemEditorProgID = 'Mosart.ActiveX';
+let mosPlugInID = 'Mosart.H5';
+let mosItemBrowserProgID = 'Mosart.H5';
+let mosItemEditorProgID = 'Mosart.H5';
 let status = true;
 
 
