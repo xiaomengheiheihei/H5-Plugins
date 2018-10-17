@@ -5,10 +5,10 @@ const fs = require('fs');
 const path = require('path')
 const router = require('koa-router')();
 
-let mosID = 'mosart';
-let mosPlugInID = 'Mosart.H5';
-let mosItemBrowserProgID = 'Mosart.H5';
-let mosItemEditorProgID = 'Mosart.H5';
+let mosID = 'MOSART.CCTV.MOS';
+let mosPlugInID = 'ENPSHTMLHost';
+let mosItemBrowserProgID = 'ENPSHTMLHost';
+let mosItemEditorProgID = 'ENPSHTMLHost';
 let status = true;
 
 

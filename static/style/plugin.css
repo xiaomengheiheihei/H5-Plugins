@@ -87,16 +87,18 @@ main {
 }
 .container {
     margin-top: 20px;
+	display: flex;
+    justify-content: space-between;
 }
 .left-wrap, .center-wrap {
     float: left;
     width: 150px;
     height: 300px;
     border: 1px solid #eee;
-    margin-right: 70px;
+    margin-right: 10px;
 }
 .left-wrap {
-    margin-right: 70px;
+    margin-right: 10px;
 }
 .left-wrap ul, .center-wrap ul {
     width: 100%;
@@ -112,7 +114,7 @@ main {
     /* width: 100%;
     margin-left: 500px; */
     float: right;
-    width: 50%;
+    width: 45%;
 }
 .btns-wrap {
     margin-top: 20px;
@@ -201,5 +203,5 @@ footer {
 }
 .transition-main input {
     display: inline-block;
-    width: 150px;
+    width: 50%;
 }

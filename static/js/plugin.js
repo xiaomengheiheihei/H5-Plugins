@@ -5,7 +5,7 @@
 /**
  * template data
  */  
-var typeList = [], templateTypeList = [], channels, config, dragInfo, currentId;
+var typeList = [], templateTypeList = [], channels, config, dragInfo, currentId, recoverData, itemId, isChange = false;
 renderEvent();
 $.ajax({
     url: '/getJson',
@@ -51,10 +51,19 @@ if (window.addEventListener) {
 } else if (window.attachEvent) {
     window.attachEvent('message', mosMsgFromHost, false);
 }
+var getInfo = '<mos><ncsItemRequest/></mos>'
+window.parent.postMessage(getInfo, getNewsroomOrigin());
 
-
-
-// window.parent.postMessage(message, getNewsroomOrigin());
+$('.save').click(function () {
+	// $('.pre-mos').html(createData());
+	//var a = safe_tags_replace(createData());
+	if (isChange && !!itemId) {			// cahnge
+		var a = safe_tags_replace(createData(1));
+	} else {
+		var a = safe_tags_replace(createData(0));
+	}
+	window.parent.postMessage(a, getNewsroomOrigin());
+})
 
 function getNewsroomOrigin() {
     var qs = document.location.search.split("+").join(" ");
@@ -67,7 +76,8 @@ function getNewsroomOrigin() {
 }
 
 function mosMsgFromHost(event) {
-    var message = event.data;
+   var message = event.data;
+   itemId = undefined;
     // Check the Origin in event.origin to ensure it matches
     // our expected NCS origin parameter.
     if (event.origin != getNewsroomOrigin()) {
@@ -75,9 +85,23 @@ function mosMsgFromHost(event) {
         return;
     }
     // Handle the Message
+	// $('.pre-mos').html(message);
+	if (isChange) {
+		isChange = !isChange;
+		$('.cancel').click();
+	}
+	if (message.indexOf('itemID') > 0) {
+		itemId = message.split('<itemID>')[1];
+		itemId = itemId.split('</itemID>')[0];
+	}
+	if (!!itemId && itemId > 0) {
+		recoverData = message;
+		isChange = true;
+		_recover();
+	}
     // To Reply, issue a postMessage on the event source.
-    var reply = "SOME MOS MESSAGE";
-    event.source.postMessage(reply, event.origin);
+    // var reply = 'SOME';
+    // event.source.postMessage(reply, event.origin);
 }
 
 
@@ -102,6 +126,62 @@ function replaceTag(tag) {
 function safe_tags_replace(str) {
     return str.replace(/&lt;|&gt;/g, replaceTag);
 }
+
+// recover
+function _recover () {
+	recoverData = recoverData.toString().split('mosAbstract')[1]
+	recoverData = recoverData.replace('</', '');
+	recoverData = recoverData.replace('>', '');
+	recoverData = recoverData.split('_');
+	for (var j = 0; j < channels.length; j++) {
+		channels[j].$.default = "False";
+		if (recoverData[0] == channels[j].$.name) {
+			channels[j].$.default = "True";
+		}
+	}
+	makeTypeList(channels);
+	renderName(channels);
+	makeTemplateType(channels);
+	renderTransitions(channels);
+	$.each($('.left-wrap ul li'), function (index,ele) {
+		if ($(ele).html() == recoverData[1]) {
+			$(ele).click();
+		}
+	})
+	$.each($('.center-wrap ul li'), function (index,ele) {
+		if ($(ele).html() == recoverData[2]) {
+			$(ele).click();
+		}
+	})
+	
+	var id = findItem(true);
+	channels.forEach(function(element) {
+		if (!!element.channel) {
+			element.channel.forEach(function(ele) {
+				if (ele.$.ID == id) {
+					ele.switcher_setup && ele.switcher_setup.transitions ? ele.switcher_setup.transitions.$.value = recoverData[3] : '';
+				}
+			})
+		}
+	});
+	renderTransitions(channels, currentId);
+	
+	if (recoverData[3] === 'EFFECT') {
+		$('.transition-select-form').val(recoverData[4]);
+	}
+	if (recoverData[3] === 'MIX') {
+		$('#transition-form-item').val(recoverData[4]);
+	}
+	if (recoverData[3] === 'WIPE') {
+		$('#transition-form-item').val(recoverData[4]);
+	}
+}
+
+// close 
+$('.cancel').click(function () {
+	var close = '<mos><ncsReqAppClose/></mos>'
+	window.parent.postMessage(close, getNewsroomOrigin());
+}) 
 
 // 组装typelist数组
 function makeTypeList(data) {
@@ -249,13 +329,14 @@ function renderTemplatetype (data) {
     var html = '';
     for(var i = 0; i < data.length; i++) {
         if (i === 0) {
-            html += '<li choosed="1" channelId="'+ data[i].ID +'">'+ data[i].templatetype +'</li>'
+            html += '<li choosed="0" channelId="'+ data[i].ID +'">'+ data[i].templatetype +'</li>'
         } else {
             html += '<li choosed="0" channelId="'+ data[i].ID +'">'+ data[i].templatetype +'</li>'
         }
     }
     $('.center-wrap ul').children().remove();
     $('.center-wrap ul').append(html);
+	$('.center-wrap ul li')[0].click();
     // selected default item
     $.each($('.center-wrap ul li'), function (i,v) {
         if($(v).attr('choosed') == 1) {
@@ -416,7 +497,7 @@ function renderEvent () {
 }
 
 
-function createData () {
+function createData (type) {
     if (!config) {alert('请开启服务！')}
         var choosedChannel = findItem();
         var choosedTransition;
@@ -425,7 +506,8 @@ function createData () {
                 choosedTransition = ele;
             }
         })
-        var mos =   '&lt;mos&gt;' + 
+		if (type === 0) {
+			var mos =   '&lt;mos&gt;' + 
                     '&lt;ncsItem&gt;' +
                     '&lt;item&gt;' +
                     '&lt;itemID&gt;' + 0 + '&lt;/itemID&gt;'+
@@ -434,8 +516,8 @@ function createData () {
                     '&lt;mosPlugInID&gt;'+ config.mosPlugInID +'&lt;/mosPlugInID&gt;' +
                     '&lt;mosItemBrowserProgID&gt;'+ config.mosItemBrowserProgID +'&lt;/mosItemBrowserProgID&gt;' + 
                     '&lt;mosItemEditorProgID&gt;'+ config.mosItemEditorProgID +'&lt;/mosItemEditorProgID&gt;' + 
-                    '&lt;mosAbstract&gt;'+ changeType(choosedChannel.$.type) + ' ' + choosedChannel.$.templatetype + ' ' + 
-                    $('#transition-select').val() + ' ' + ($('#transition-form-item').val() == undefined ? $('.transition-select-form').val() : $('#transition-form-item').val()) +'&lt;/mosAbstract&gt;' +
+                    '&lt;mosAbstract&gt;'+ $('#templateName').val() +'_'+ changeType(choosedChannel.$.type) + '_' + choosedChannel.$.templatetype + '_' + 
+                    $('#transition-select').val() + '_' + ($('#transition-form-item').val() == undefined ? $('.transition-select-form').val() : $('#transition-form-item').val()) +'&lt;/mosAbstract&gt;' +
                     '&lt;mosExternalMetadata&gt;' +
                     '&lt;mosScope&gt;PLAYLIST&lt;/mosScope&gt;' + 
                     '&lt;mosSchema&gt;http://www.mosartmedialab.no/schema/mositem.dtd&lt;/mosSchema&gt;' +
@@ -456,9 +538,45 @@ function createData () {
                     '&lt;/mosarttemplate&gt;' +
                     '&lt;/mosPayload&gt;' +
                     '&lt;/mosExternalMetadata&gt;' +
-                    '&lt;item&gt;' +
+                    '&lt;/item&gt;' +
                     '&lt;/ncsItem&gt;' +
                     '&lt;/mos&gt;';
+		} else {
+			var mos =   '&lt;mos&gt;' + 
+                    '&lt;mosItemReplace&gt;' +
+                    '&lt;item&gt;' +
+                    '&lt;itemID&gt;' + itemId + '&lt;/itemID&gt;'+
+                    '&lt;objID&gt;'+ changeType(choosedChannel.$.type) + ';' + choosedChannel.$.templatetype +'&lt;/objID&gt;' +
+                    '&lt;mosID&gt;'+ config.mosID +'&lt;/mosID&gt;' + 
+                    '&lt;mosPlugInID&gt;'+ config.mosPlugInID +'&lt;/mosPlugInID&gt;' +
+                    '&lt;mosItemBrowserProgID&gt;'+ config.mosItemBrowserProgID +'&lt;/mosItemBrowserProgID&gt;' + 
+                    '&lt;mosItemEditorProgID&gt;'+ config.mosItemEditorProgID +'&lt;/mosItemEditorProgID&gt;' + 
+                    '&lt;mosAbstract&gt;'+ $('#templateName').val() +'_'+ changeType(choosedChannel.$.type) + '_' + choosedChannel.$.templatetype + '_' + 
+                    $('#transition-select').val() + '_' + ($('#transition-form-item').val() == undefined ? $('.transition-select-form').val() : $('#transition-form-item').val()) +'&lt;/mosAbstract&gt;' +
+                    '&lt;mosExternalMetadata&gt;' +
+                    '&lt;mosScope&gt;PLAYLIST&lt;/mosScope&gt;' + 
+                    '&lt;mosSchema&gt;http://www.mosartmedialab.no/schema/mositem.dtd&lt;/mosSchema&gt;' +
+                    '&lt;mosPayload&gt;' + 
+                    '&lt;mosarttemplate&gt;' + 
+                    '&lt;type name="'+ changeType(choosedChannel.$.type) +'" category=""&gt;' +
+                    '&lt;variants value="' + choosedChannel.$.templatetype + '" fieldtype="LIST"&gt;' +
+                    '&lt;variant name="' + choosedChannel.$.templatetype +'"&gt;' + 
+                    '&lt;transitions value="'+$('#transition-select').val()+'" enable="false"&gt;' +
+                    '&lt;transition name="'+$('#transition-select').val()+'"&gt;' +
+                    (choosedTransition.field.$.fieldtype == 'NUMBER' ? '&lt;field name="'+choosedTransition.field.$.name+'" value="'+$('#transition-form-item').val()+'" fieldtype="'+choosedTransition.field.$.fieldtype+'" range="'+choosedTransition.field.$.range+'" /&gt;' : '&lt;field name="'+choosedTransition.field.$.name+'" value="'+$('.transition-select-form').val()+'" fieldtype="'+choosedTransition.field.$.fieldtype+'" /&gt;') +
+                    '&lt;/transition&gt;' +
+                    '&lt;/transitions&gt;' +
+                    '&lt;fields /&gt;' +
+                    '&lt;/variant&gt;' +
+                    '&lt;/variants&gt;' +
+                    '&lt;/type&gt;' +
+                    '&lt;/mosarttemplate&gt;' +
+                    '&lt;/mosPayload&gt;' +
+                    '&lt;/mosExternalMetadata&gt;' +
+                    '&lt;/item&gt;' +
+                    '&lt;/mosItemReplace&gt;' +
+                    '&lt;/mos&gt;';
+		}
     return mos;
 }
 
